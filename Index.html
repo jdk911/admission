@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Government School Online Admission Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f1f5f9; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .form-card { max-width: 820px; margin: 30px auto; background: #fff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); overflow: hidden; }
+    .form-header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #fff; padding: 24px; text-align: center; }
+    .section-title { font-size: 1.05rem; font-weight: 700; color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 16px; margin-top: 20px; }
+    .camera-box { border: 2px dashed #94a3b8; border-radius: 8px; padding: 12px; text-align: center; background: #f8fafc; }
+    video, #photoPreview { width: 100%; max-width: 280px; height: 220px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; background: #000; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="form-card">
+    <div class="form-header">
+      <h3 class="mb-1">Online Student Admission Portal</h3>
+      <p class="mb-0 small opacity-75">Government School Admission Registration Form</p>
+    </div>
+
+    <form id="admissionForm" class="p-4" onsubmit="handleFormSubmit(event)">
+      
+      <!-- 1. School Location Details -->
+      <div class="section-title">1. School & Location Details</div>
+      <div class="row g-3">
+        <div class="col-md-12">
+          <label class="form-label fw-semibold">Full School Name *</label>
+          <input type="text" class="form-control" id="schoolName" placeholder="Enter Full Government School Name" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Block *</label>
+          <input type="text" class="form-control" id="block" placeholder="e.g., Danapur" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">District *</label>
+          <input type="text" class="form-control" id="district" placeholder="e.g., Patna" required>
+        </div>
+      </div>
+
+      <!-- 2. Student Academic & Personal Info -->
+      <div class="section-title">2. Student Details</div>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Admission Class *</label>
+          <select class="form-select" id="admissionClass" required>
+            <option value="">Select Class</option>
+            <option value="1">Class 1</option>
+            <option value="2">Class 2</option>
+            <option value="3">Class 3</option>
+            <option value="4">Class 4</option>
+            <option value="5">Class 5</option>
+            <option value="6">Class 6</option>
+            <option value="7">Class 7</option>
+            <option value="8">Class 8</option>
+            <option value="9">Class 9</option>
+            <option value="10">Class 10</option>
+            <option value="11">Class 11</option>
+            <option value="12">Class 12</option>
+          </select>
+        </div>
+        <div class="col-md-8">
+          <label class="form-label fw-semibold">Student Full Name (min 4 letters) *</label>
+          <input type="text" class="form-control" id="studentName" minlength="4" placeholder="As per official records" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Father's Name *</label>
+          <input type="text" class="form-control" id="fatherName" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Mother's Name *</label>
+          <input type="text" class="form-control" id="motherName" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Date of Birth *</label>
+          <input type="date" class="form-control" id="dob" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Gender *</label>
+          <select class="form-select" id="gender" required>
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label fw-semibold">Category *</label>
+          <select class="form-select" id="category" required>
+            <option value="">Select</option>
+            <option value="General">General</option>
+            <option value="OBC">OBC / EBC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Last 4 Digits of Student Aadhaar</label>
+          <input type="text" class="form-control" id="aadhaarLast4" maxlength="4" pattern="\d{4}" placeholder="XXXX">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Parent/Guardian Mobile No. *</label>
+          <input type="tel" class="form-control" id="mobile" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label fw-semibold">Residential Address *</label>
+          <textarea class="form-control" id="address" rows="2" required></textarea>
+        </div>
+      </div>
+
+      <!-- 3. Live Camera Photo Capture -->
+      <div class="section-title">3. Student Live Camera Capture *</div>
+      <div class="camera-box">
+        <div class="row align-items-center justify-content-center g-3">
+          <div class="col-md-6">
+            <video id="cameraStream" autoplay playsinline></video>
+            <canvas id="cameraCanvas" width="320" height="240" class="d-none"></canvas>
+            <div class="mt-2">
+              <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="startCamera()">Start Camera</button>
+              <button type="button" class="btn btn-primary btn-sm" id="captureBtn" onclick="takeSnapshot()" disabled>Capture Photo</button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <img id="photoPreview" alt="Captured Student Photo Preview" src="https://via.placeholder.com/280x220?text=No+Photo+Captured">
+            <input type="hidden" id="photoBase64" required>
+            <div class="small text-muted mt-1" id="photoStatus">Click "Start Camera" then "Capture Photo"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 text-center">
+        <button type="submit" id="submitBtn" class="btn btn-success px-5 py-2 fw-bold">Submit Admission Application</button>
+      </div>
+    </form>
+
+    <!-- Confirmation Receipt Modal Area -->
+    <div id="receiptArea" class="p-4 d-none text-center">
+      <div class="alert alert-success">
+        <h4 class="alert-heading">Application Submitted Successfully!</h4>
+        <p class="mb-1">Please note down your unique Application Reference Code:</p>
+        <h2 class="fw-bold text-primary my-3" id="generatedCodeDisplay"></h2>
+        <p class="small text-muted mb-0" id="receiptDetails"></p>
+      </div>
+      <button class="btn btn-outline-secondary btn-sm mt-2" onclick="window.print()">Print Acknowledgment</button>
+      <button class="btn btn-primary btn-sm mt-2 ms-2" onclick="resetFormView()">Submit Another Application</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let streamRef = null;
+
+  async function startCamera() {
+    const video = document.getElementById('cameraStream');
+    const captureBtn = document.getElementById('captureBtn');
+    try {
+      if (streamRef) {
+        streamRef.getTracks().forEach(track => track.stop());
+      }
+      streamRef = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: 320, height: 240 },
+        audio: false
+      });
+      video.srcObject = streamRef;
+      captureBtn.disabled = false;
+      document.getElementById('photoStatus').innerText = 'Camera active. Ready to capture.';
+    } catch (err) {
+      alert('Unable to access camera. Please allow camera permissions in your browser: ' + err.message);
+    }
+  }
+
+  function takeSnapshot() {
+    const video = document.getElementById('cameraStream');
+    const canvas = document.getElementById('cameraCanvas');
+    const preview = document.getElementById('photoPreview');
+    const base64Input = document.getElementById('photoBase64');
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+    preview.src = dataUrl;
+    base64Input.value = dataUrl;
+    document.getElementById('photoStatus').innerText = 'Photo captured successfully!';
+  }
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    const photoData = document.getElementById('photoBase64').value;
+    if (!photoData) {
+      alert('Please capture the student photo using the camera before submitting.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Submitting Application...';
+
+    const payload = {
+      schoolName: document.getElementById('schoolName').value,
+      block: document.getElementById('block').value,
+      district: document.getElementById('district').value,
+      admissionClass: document.getElementById('admissionClass').value,
+      studentName: document.getElementById('studentName').value,
+      fatherName: document.getElementById('fatherName').value,
+      motherName: document.getElementById('motherName').value,
+      dob: document.getElementById('dob').value,
+      gender: document.getElementById('gender').value,
+      category: document.getElementById('category').value,
+      aadhaarLast4: document.getElementById('aadhaarLast4').value,
+      mobile: document.getElementById('mobile').value,
+      address: document.getElementById('address').value,
+      photoBase64: photoData
+    };
+
+    google.script.run
+      .withSuccessHandler(function(res) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Admission Application';
+        if (res.success) {
+          if (streamRef) streamRef.getTracks().forEach(t => t.stop());
+          document.getElementById('admissionForm').classList.add('d-none');
+          document.getElementById('receiptArea').classList.remove('d-none');
+          document.getElementById('generatedCodeDisplay').innerText = res.applicationId;
+          document.getElementById('receiptDetails').innerText =
+            `Student: ${res.studentName} | School: ${res.schoolName}`;
+        } else {
+          alert('Submission Error: ' + res.message);
+        }
+      })
+      .withFailureHandler(function(err) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Admission Application';
+        alert('Server Error: ' + err.message);
+      })
+      .submitAdmissionForm(payload);
+  }
+
+  function resetFormView() {
+    document.getElementById('admissionForm').reset();
+    document.getElementById('photoBase64').value = '';
+    document.getElementById('photoPreview').src = 'https://via.placeholder.com/280x220?text=No+Photo+Captured';
+    document.getElementById('receiptArea').classList.add('d-none');
+    document.getElementById('admissionForm').classList.remove('d-none');
+  }
+</script>
+</body>
+</html>
