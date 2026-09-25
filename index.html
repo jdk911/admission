@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Government School Online Admission Portal (GitHub Edition)</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f1f5f9; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .portal-card { max-width: 900px; margin: 25px auto; background: #fff; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.08); overflow: hidden; }
+    .portal-header { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: #fff; padding: 22px; text-align: center; }
+    .section-title { font-size: 1.05rem; font-weight: 700; color: #1e3a8a; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 16px; margin-top: 20px; }
+    .camera-box { border: 2px dashed #94a3b8; border-radius: 8px; padding: 12px; text-align: center; background: #f8fafc; }
+    video, #photoPreview { width: 100%; max-width: 260px; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #cbd5e1; background: #000; }
+    .thumb-img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="portal-card">
+    <div class="portal-header">
+      <h3 class="mb-1">Online Student Admission Portal</h3>
+      <p class="mb-0 small opacity-75">100% Hosted & Stored on GitHub</p>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs px-4 pt-3 bg-light" role="tablist">
+      <li class="nav-item">
+        <button class="nav-link active fw-semibold" id="form-tab" onclick="switchTab('form')">New Admission Form</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link fw-semibold" id="records-tab" onclick="switchTab('records')">Saved Applications & Excel Export (<span id="recordCount">0</span>)</button>
+      </li>
+      <li class="nav-item ms-auto">
+        <button class="nav-link text-secondary small" id="config-tab" onclick="switchTab('config')">⚙️ GitHub Storage Setup</button>
+      </li>
+    </ul>
+
+    <!-- TAB 1: ADMISSION FORM -->
+    <div id="tab-form" class="p-4">
+      <form id="admissionForm" onsubmit="handleFormSubmit(event)">
+        
+        <!-- 1. School Location Details -->
+        <div class="section-title mt-0">1. School & Location Details</div>
+        <div class="row g-3">
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">Full School Name *</label>
+            <input type="text" class="form-control" id="schoolName" placeholder="Enter Full Government School Name" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Block *</label>
+            <input type="text" class="form-control" id="block" placeholder="e.g., Danapur" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">District *</label>
+            <input type="text" class="form-control" id="district" placeholder="e.g., Patna" required>
+          </div>
+        </div>
+
+        <!-- 2. Student Academic & Personal Info -->
+        <div class="section-title">2. Student Details</div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Admission Class *</label>
+            <select class="form-select" id="admissionClass" required>
+              <option value="">Select Class</option>
+              <option value="CLASS1">Class 1</option>
+              <option value="CLASS2">Class 2</option>
+              <option value="CLASS3">Class 3</option>
+              <option value="CLASS4">Class 4</option>
+              <option value="CLASS5">Class 5</option>
+              <option value="CLASS6">Class 6</option>
+              <option value="CLASS7">Class 7</option>
+              <option value="CLASS8">Class 8</option>
+              <option value="CLASS9">Class 9</option>
+              <option value="CLASS10">Class 10</option>
+              <option value="CLASS11">Class 11</option>
+              <option value="CLASS12">Class 12</option>
+            </select>
+          </div>
+          <div class="col-md-8">
+            <label class="form-label fw-semibold">Student Full Name (min 4 letters) *</label>
+            <input type="text" class="form-control" id="studentName" minlength="4" placeholder="As per official records" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Father's Name *</label>
+            <input type="text" class="form-control" id="fatherName" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Mother's Name *</label>
+            <input type="text" class="form-control" id="motherName" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Date of Birth *</label>
+            <input type="date" class="form-control" id="dob" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Gender *</label>
+            <select class="form-select" id="gender" required>
+              <option value="">Select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label fw-semibold">Category *</label>
+            <select class="form-select" id="category" required>
+              <option value="">Select</option>
+              <option value="General">General</option>
+              <option value="OBC">OBC / EBC</option>
+              <option value="SC">SC</option>
+              <option value="ST">ST</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Last 4 Digits of Student Aadhaar</label>
+            <input type="text" class="form-control" id="aadhaarLast4" maxlength="4" pattern="\d{4}" placeholder="XXXX">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Parent/Guardian Mobile No. *</label>
+            <input type="tel" class="form-control" id="mobile" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required>
+          </div>
+          <div class="col-md-12">
+            <label class="form-label fw-semibold">Residential Address *</label>
+            <textarea class="form-control" id="address" rows="2" required></textarea>
+          </div>
+        </div>
+
+        <!-- 3. Live Camera Photo Capture -->
+        <div class="section-title">3. Student Live Camera Capture *</div>
+        <div class="camera-box">
+          <div class="row align-items-center justify-content-center g-3">
+            <div class="col-md-6">
+              <video id="cameraStream" autoplay playsinline></video>
+              <canvas id="cameraCanvas" width="320" height="240" class="d-none"></canvas>
+              <div class="mt-2">
+                <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="startCamera()">Start Camera</button>
+                <button type="button" class="btn btn-primary btn-sm" id="captureBtn" onclick="takeSnapshot()" disabled>Capture Photo</button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <img id="photoPreview" alt="Captured Student Photo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='200'><rect width='100%' height='100%' fill='%23e2e8f0'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2364748b' font-family='sans-serif' font-size='14'>No Photo Captured</text></svg>">
+              <input type="hidden" id="photoBase64">
+              <div class="small text-muted mt-1" id="photoStatus">Click "Start Camera" then "Capture Photo"</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button type="submit" id="submitBtn" class="btn btn-success px-5 py-2 fw-bold">Submit Admission Application</button>
+        </div>
+      </form>
+
+      <!-- Receipt Modal Area -->
+      <div id="receiptArea" class="d-none text-center py-3">
+        <div class="alert alert-success">
+          <h4 class="alert-heading">Application Submitted Successfully!</h4>
+          <p class="mb-1">Unique Application Reference Code (<code>YYMMDD/BLOCK/CLASS/NAME4</code>):</p>
+          <h2 class="fw-bold text-primary my-3" id="generatedCodeDisplay"></h2>
+          <p class="small text-muted mb-1" id="receiptDetails"></p>
+          <span class="badge bg-secondary" id="storageStatusBadge"></span>
+        </div>
+        <button class="btn btn-outline-secondary btn-sm mt-2" onclick="window.print()">Print Receipt</button>
+        <button class="btn btn-primary btn-sm mt-2 ms-2" onclick="resetFormView()">Submit Another Application</button>
+      </div>
+    </div>
+
+    <!-- TAB 2: SAVED APPLICATIONS & EXCEL EXPORT -->
+    <div id="tab-records" class="p-4 d-none">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 text-primary fw-bold">Submitted Applications</h5>
+        <div>
+          <button class="btn btn-success btn-sm fw-semibold me-2" onclick="exportToExcelCSV()">📥 Download Excel (.CSV) Sheet</button>
+          <button class="btn btn-outline-danger btn-sm" onclick="clearLocalRecords()">Clear Local Cache</button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle small">
+          <thead class="table-light">
+            <tr>
+              <th>Photo</th>
+              <th>Application Code</th>
+              <th>Student Name</th>
+              <th>Class</th>
+              <th>School / Block / District</th>
+              <th>Mobile</th>
+            </tr>
+          </thead>
+          <tbody id="recordsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: GITHUB REPOSITORY AUTO-COMMIT SETUP -->
+    <div id="tab-config" class="p-4 d-none">
+      <h5 class="text-primary fw-bold">Direct GitHub Repository Storage (Optional Auto-Commit)</h5>
+      <p class="small text-muted">
+        By default, every submission is saved in your browser and can be downloaded as an Excel CSV sheet. 
+        If you also want every form submission to automatically commit rows to <code>data/admissions.csv</code> and upload photos to <code>photos/</code> inside your GitHub repository, enter your repository details below:
+      </p>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">GitHub Username</label>
+          <input type="text" class="form-control form-control-sm" id="ghOwner" placeholder="e.g., ashish-singh">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Repository Name</label>
+          <input type="text" class="form-control form-control-sm" id="ghRepo" placeholder="e.g., govt-school-admission">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small fw-semibold">Branch</label>
+          <input type="text" class="form-control form-control-sm" id="ghBranch" value="main">
+        </div>
+        <div class="col-md-12">
+          <label class="form-label small fw-semibold">GitHub Fine-Grained Personal Access Token (with "Contents: Read & Write" permission)</label>
+          <input type="password" class="form-control form-control-sm" id="ghToken" placeholder="github_pat_...">
+        </div>
+        <div class="col-md-12">
+          <button class="btn btn-primary btn-sm" onclick="saveGitHubConfig()">Save GitHub Repo Settings</button>
+          <span id="configSavedMsg" class="text-success small ms-2 d-none">Settings saved!</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let streamRef = null;
+  const STORAGE_KEY = 'GOVT_SCHOOL_ADMISSIONS_DATA';
+  const GH_CONFIG_KEY = 'GOVT_SCHOOL_GH_CONFIG';
+
+  // Initialize on load
+  window.addEventListener('DOMContentLoaded', () => {
+    renderRecordsTable();
+    const savedCfg = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || '{}');
+    if (savedCfg.owner) document.getElementById('ghOwner').value = savedCfg.owner;
+    if (savedCfg.repo) document.getElementById('ghRepo').value = savedCfg.repo;
+    if (savedCfg.branch) document.getElementById('ghBranch').value = savedCfg.branch;
+    if (savedCfg.token) document.getElementById('ghToken').value = savedCfg.token;
+  });
+
+  function switchTab(tab) {
+    ['form', 'records', 'config'].forEach(t => {
+      document.getElementById(`tab-${t}`).classList.toggle('d-none', t !== tab);
+      document.getElementById(`${t}-tab`).classList.toggle('active', t === tab);
+    });
+    if (tab === 'records') renderRecordsTable();
+  }
+
+  // Generate YYMMDD/BLOCK/CLASS/FIRST4 Code
+  function generateApplicationCode(block, admissionClass, studentName) {
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(-2);
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+
+    const cleanBlock = (block || 'BLK').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const cleanClass = (admissionClass || 'CLS').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const cleanName = (studentName || 'STUD').trim().toUpperCase().replace(/[^A-Z]/g, '').padEnd(4, 'X').substring(0, 4);
+
+    return `${yy}${mm}${dd}/${cleanBlock}/${cleanClass}/${cleanName}`;
+  }
+
+  // Camera Controls
+  async function startCamera() {
+    const video = document.getElementById('cameraStream');
+    try {
+      if (streamRef) streamRef.getTracks().forEach(t => t.stop());
+      streamRef = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'user', width: 320, height: 240 },
+        audio: false
+      });
+      video.srcObject = streamRef;
+      document.getElementById('captureBtn').disabled = false;
+      document.getElementById('photoStatus').innerText = 'Camera active. Click "Capture Photo".';
+    } catch (err) {
+      alert('Camera access denied or unavailable: ' + err.message);
+    }
+  }
+
+  function takeSnapshot() {
+    const video = document.getElementById('cameraStream');
+    const canvas = document.getElementById('cameraCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+    document.getElementById('photoPreview').src = dataUrl;
+    document.getElementById('photoBase64').value = dataUrl;
+    document.getElementById('photoStatus').innerText = 'Photo captured!';
+  }
+
+  // Handle Form Submission
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+    const photoData = document.getElementById('photoBase64').value;
+    if (!photoData) {
+      alert('Please capture the student photo using the camera before submitting.');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Saving Application...';
+
+    const block = document.getElementById('block').value;
+    const admissionClass = document.getElementById('admissionClass').value;
+    const studentName = document.getElementById('studentName').value;
+    const appCode = generateApplicationCode(block, admissionClass, studentName);
+
+    const record = {
+      timestamp: new Date().toISOString(),
+      applicationId: appCode,
+      schoolName: document.getElementById('schoolName').value,
+      block: block,
+      district: document.getElementById('district').value,
+      admissionClass: admissionClass,
+      studentName: studentName,
+      fatherName: document.getElementById('fatherName').value,
+      motherName: document.getElementById('motherName').value,
+      dob: document.getElementById('dob').value,
+      gender: document.getElementById('gender').value,
+      category: document.getElementById('category').value,
+      aadhaarLast4: document.getElementById('aadhaarLast4').value,
+      mobile: document.getElementById('mobile').value,
+      address: document.getElementById('address').value,
+      photoBase64: photoData
+    };
+
+    // 1. Save to Local Database (Instant Excel CSV availability)
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    existing.push(record);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+    renderRecordsTable();
+
+    // 2. If GitHub Repo Storage is configured, commit photo & CSV row directly to GitHub repo
+    let statusText = 'Saved to Local Sheet (Ready for Excel Download)';
+    const ghCfg = JSON.parse(localStorage.getItem(GH_CONFIG_KEY) || '{}');
+    if (ghCfg.owner && ghCfg.repo && ghCfg.token) {
+      try {
+        await pushRecordToGitHubRepo(record, ghCfg);
+        statusText = 'Committed directly to GitHub Repository (data/admissions.csv & photos/)';
+      } catch (err) {
+        statusText = 'Saved locally (GitHub sync error: ' + err.message + ')';
+      }
+    }
+
+    if (streamRef) streamRef.getTracks().forEach(t => t.stop());
+    submitBtn.disabled = false;
+    submitBtn.innerText = 'Submit Admission Application';
+
+    document.getElementById('admissionForm').classList.add('d-none');
+    document.getElementById('receiptArea').classList.remove('d-none');
+    document.getElementById('generatedCodeDisplay').innerText = appCode;
+    document.getElementById('receiptDetails').innerText = `Student: ${record.studentName} | School: ${record.schoolName}`;
+    document.getElementById('storageStatusBadge').innerText = statusText;
+  }
+
+  // Push Photo & CSV Row directly into GitHub Repository via GitHub REST API
+  async function pushRecordToGitHubRepo(rec, cfg) {
+    const headers = {
+      'Authorization': `Bearer ${cfg.token}`,
+      'Accept': 'application/vnd.github+json',
+      'Content-Type': 'application/json'
+    };
+    const safeFileCode = rec.applicationId.replace(/\//g, '_');
+    const photoPath = `photos/${safeFileCode}.jpg`;
+    const base64Raw = rec.photoBase64.split('base64,')[1];
+
+    // A. Upload camera photo to photos/ folder in GitHub repo
+    await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${photoPath}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        message: `Add photo for ${rec.applicationId}`,
+        content: base64Raw,
+        branch: cfg.branch || 'main'
+      })
+    });
+
+    // B. Append row to data/admissions.csv in GitHub repo
+    const csvPath = `data/admissions.csv`;
+    let existingCsv = 'Timestamp,Application Code,Full School Name,Block,District,Class,Student Name,Father Name,Mother Name,DOB,Gender,Category,Aadhaar Last 4,Mobile,Address,Photo Path\n';
+    let fileSha = null;
+
+    const getRes = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${csvPath}?ref=${cfg.branch || 'main'}`, { headers });
+    if (getRes.ok) {
+      const fileData = await getRes.json();
+      fileSha = fileData.sha;
+      existingCsv = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+    }
+
+    const esc = v => `"${String(v || '').replace(/"/g, '""')}"`;
+    const newRow = [
+      rec.timestamp, rec.applicationId, rec.schoolName, rec.block, rec.district,
+      rec.admissionClass, rec.studentName, rec.fatherName, rec.motherName,
+      rec.dob, rec.gender, rec.category, rec.aadhaarLast4, rec.mobile, rec.address, photoPath
+    ].map(esc).join(',') + '\n';
+
+    const updatedContent = btoa(unescape(encodeURIComponent(existingCsv + newRow)));
+    const putBody = {
+      message: `Add admission ${rec.applicationId}`,
+      content: updatedContent,
+      branch: cfg.branch || 'main'
+    };
+    if (fileSha) putBody.sha = fileSha;
+
+    const putRes = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${csvPath}`, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(putBody)
+    });
+    if (!putRes.ok) throw new Error('Failed to update CSV in repo');
+  }
+
+  function renderRecordsTable() {
+    const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    document.getElementById('recordCount').innerText = list.length;
+    const tbody = document.getElementById('recordsTableBody');
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-3">No applications submitted yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(r => `
+      <tr>
+        <td><img src="${r.photoBase64}" class="thumb-img" alt="photo"></td>
+        <td class="fw-bold text-primary">${r.applicationId}</td>
+        <td>${r.studentName}<br><span class="text-muted">F: ${r.fatherName}</span></td>
+        <td>${r.admissionClass}</td>
+        <td>${r.schoolName}<br><span class="text-muted">${r.block}, ${r.district}</span></td>
+        <td>${r.mobile}</td>
+      </tr>
+    `).join('');
+  }
+
+  function exportToExcelCSV() {
+    const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    if (!list.length) return alert('No applications to export.');
+    const headers = ['Timestamp','Application Code','Full School Name','Block','District','Class','Student Name','Father Name','Mother Name','DOB','Gender','Category','Aadhaar Last 4','Mobile','Address'];
+    const esc = v => `"${String(v || '').replace(/"/g, '""')}"`;
+    const rows = list.map(r => [
+      r.timestamp, r.applicationId, r.schoolName, r.block, r.district, r.admissionClass,
+      r.studentName, r.fatherName, r.motherName, r.dob, r.gender, r.category,
+      r.aadhaarLast4, r.mobile, r.address
+    ].map(esc).join(','));
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Govt_School_Admissions_${new Date().toISOString().slice(0,10)}.csv`;
+    link.click();
+  }
+
+  function clearLocalRecords() {
+    if (confirm('Clear local browser records?')) {
+      localStorage.removeItem(STORAGE_KEY);
+      renderRecordsTable();
+    }
+  }
+
+  function saveGitHubConfig() {
+    const cfg = {
+      owner: document.getElementById('ghOwner').value.trim(),
+      repo: document.getElementById('ghRepo').value.trim(),
+      branch: document.getElementById('ghBranch').value.trim() || 'main',
+      token: document.getElementById('ghToken').value.trim()
+    };
+    localStorage.setItem(GH_CONFIG_KEY, JSON.stringify(cfg));
+    const msg = document.getElementById('configSavedMsg');
+    msg.classList.remove('d-none');
+    setTimeout(() => msg.classList.add('d-none'), 3000);
+  }
+
+  function resetFormView() {
+    document.getElementById('admissionForm').reset();
+    document.getElementById('photoBase64').value = '';
+    document.getElementById('receiptArea').classList.add('d-none');
+    document.getElementById('admissionForm').classList.remove('d-none');
+  }
+</script>
+</body>
+</html>
